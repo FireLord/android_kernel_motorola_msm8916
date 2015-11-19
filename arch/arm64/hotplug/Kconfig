@@ -37,3 +37,8 @@ config ASMP
  default n
  help
    Automatically hotplugs the multiple cpu cores on and off based on cpu load and suspend state
+
+config THUNDERPLUG_CONTROL
+ 	bool "Enable plugging down/up of cores using powersuspend"
+ 	help
+ 	  This driver uses powersuspend to take down the cpu cores on a octa core device.
