@@ -2085,6 +2085,7 @@ static inline void iterate_bdevs(void (*f)(struct block_device *, void *), void 
 #endif
 extern int sync_filesystem(struct super_block *);
 extern const struct file_operations def_blk_fops;
+extern void sync_filesystems(int wait);
 extern const struct file_operations def_chr_fops;
 extern const struct file_operations bad_sock_fops;
 #ifdef CONFIG_BLOCK
@@ -2702,3 +2703,4 @@ static inline void inode_has_no_xattr(struct inode *inode)
 }
 
 #endif /* _LINUX_FS_H */
+
