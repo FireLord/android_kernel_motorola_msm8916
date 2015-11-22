@@ -126,6 +126,12 @@ config CPU_FREQ_DEFAULT_GOV_DARKNESS
  	bool "darkness"
  	select CPU_FREQ_GOV_DARKNESS
 
+config CPU_FREQ_DEFAULT_GOV_SMARTMAX
+ 	bool "smartmax"
+ 	select CPU_FREQ_GOV_SMARTMAX
+ 	help
+ 	  Use the CPUFreq governor 'smartmax' as default
+
 endchoice
 
 config CPU_FREQ_GOV_PERFORMANCE
@@ -241,6 +247,12 @@ config CPU_FREQ_GOV_INTELLIDEMAND
 
 config CPU_FREQ_GOV_DARKNESS
 	tristate "'darkness' cpufreq policy governor"
+
+config CPU_FREQ_GOV_SMARTMAX
+ 	tristate "'smartmax' cpufreq policy governor"
+ 	select CPU_FREQ_TABLE
+ 	help
+ 	  'smartmax' combines ondemand and smartass2
 
 config GENERIC_CPUFREQ_CPU0
 	tristate "Generic CPU0 cpufreq driver"
