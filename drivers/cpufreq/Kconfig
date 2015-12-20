@@ -150,6 +150,14 @@ config CPU_FREQ_DEFAULT_GOV_WHEATLEY
  	---help---
  	  Use the CPUFreq governor 'wheatley' as default.
 
+config CPU_FREQ_DEFAULT_GOV_HYPER
+ 	bool "hyper"
+ 	select CPU_FREQ_GOV_HYPER
+
+config CPU_FREQ_DEFAULT_GOV_YANKACTIVE
+ 	bool "yankactive"
+ 	select CPU_FREQ_GOV_YANKACTIVE
+
 endchoice
 
 config CPU_FREQ_GOV_PERFORMANCE
@@ -285,6 +293,17 @@ config CPU_FREQ_GOV_ALUCARD
 config CPU_FREQ_GOV_WHEATLEY
  	tristate "'wheatley' cpufreq governor"
  	depends on CPU_FREQ 
+
+config CPU_FREQ_GOV_HYPER
+ 	tristate "'hyper' cpufreq governor"
+ 	depends on CPU_FREQ
+ 	---help---
+ 	  'hyper' - A tweaked "ondemand" based smart and smooth optimized governor!
+
+config CPU_FREQ_GOV_YANKACTIVE
+ 	tristate "'yankactive' cpufreq policy governor"
+ 	help
+   	  'yankactive' - This driver adds a dynamic cpufreq policy governor designed for latency-sensitive workloads. The governor is based on interactive with just different default settings and can be achieved using interactive with a script. This is added for simplification purposes for myself. 
 
 config GENERIC_CPUFREQ_CPU0
 	tristate "Generic CPU0 cpufreq driver"
