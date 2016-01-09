@@ -9,3 +9,54 @@ config CLUSTER_PLUG
           This hotplug implementation always keeps the big cluster
           online, and only activates the little cluster for heavy
           parallel loads.
+
+config MSM_HOTPLUG
+	bool "MSM hotplug driver"
+	depends on HOTPLUG_CPU
+	default y
+	help
+	  The MSM hotplug driver controls on-/offlining of additional cores based on current cpu load.
+
+config BRICKED_HOTPLUG
+ 	bool "Enable kernel based mpdecision"
+ 	depends on MSM_RUN_QUEUE_STATS
+ 	default y
+ 	help
+ 	  This enables kernel based multi core control. 
+
+config ALUCARD_HOTPLUG
+	bool "Enable alucard-hotplug cpu hotplug driver"
+ 	default y
+ 	help
+ 	  Generic Alucard-hotplug cpu hotplug driver for ARM SOCs
+
+config MSM_SLEEPER
+ 	bool "CPU hotplug driver"
+ 	default y
+ 	help
+ 	  CPU hotplug driver
+
+config INTELLI_PLUG
+ 	bool "Hotplug for Razor Reborn"
+ 	depends on MSM_RUN_QUEUE_STATS
+ 	default y
+ 	help
+ 	  This enables kernel based multi core control.
+
+config ASMP
+ bool "Multi-core automatic hotplug support"
+ depends on SMP
+ default n
+ help
+   Automatically hotplugs the multiple cpu cores on and off based on cpu load and suspend state
+
+config THUNDERPLUG_CONTROL
+ 	bool "Enable plugging down/up of cores using powersuspend"
+ 	help
+ 	  This driver uses powersuspend to take down the cpu cores on a octa core device.
+
+config MAKO_HOTPLUG
+ 	bool "Mako Hotplug"
+ 	default n
+ 	help
+ 	  Mako Hotplug: A custom hotplug by fransico franco
