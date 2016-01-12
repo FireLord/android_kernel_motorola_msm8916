@@ -27,7 +27,7 @@
 
 		qcom,chipid = <0x03000600>;
 
-		qcom,initial-pwrlevel = <4>;
+		qcom,initial-pwrlevel = <3>;
 
 		/* Idle Timeout */
 		qcom,idle-timeout = <80>;
