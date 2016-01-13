@@ -46,6 +46,10 @@
 #include <linux/input/mt.h>
 #endif
 
+#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
+#include <linux/input/doubletap2wake.h>
+#endif
+
 #define DRIVER_NAME "synaptics_dsx_i2c"
 #define INPUT_PHYS_NAME "synaptics_dsx_i2c/input0"
 #define TYPE_B_PROTOCOL
@@ -5718,7 +5722,15 @@ static int synaptics_dsx_panel_cb(struct notifier_block *nb,
 	struct synaptics_rmi4_data *rmi4_data =
 		container_of(nb, struct synaptics_rmi4_data, panel_nb);
 
-	if ((event == rmi4_data->event_blank || event == FB_EVENT_BLANK) &&
+#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
+	bool prevent_sleep = (dt2w_switch > 0);
+			if (prevent_sleep) {
+				pr_debug("suspend avoided!\n");
+				synaptics_dsx_enable_wakeup_source(rmi4_data, true);
+				return 0;
+			} else {
+#endif
+
 			evdata && evdata->info && evdata->info->node == 0 &&
 			evdata->data && rmi4_data) {
 		int *blank = evdata->data;
@@ -5736,6 +5748,9 @@ static int synaptics_dsx_panel_cb(struct notifier_block *nb,
 			synaptics_dsx_display_on(&rmi4_data->i2c_client->dev);
 		}
 	}
+#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
+	}
+#endif
 
 	return 0;
 }
