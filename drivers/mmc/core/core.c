@@ -67,9 +67,24 @@ static const unsigned freqs[] = { 400000, 300000, 200000, 100000 };
  * Enabling software CRCs on the data blocks can be a significant (30%)
  * performance cost, and for other reasons may not always be desired.
  * So we allow it it to be disabled.
- */
-bool use_spi_crc = 0;
-module_param(use_spi_crc, bool, 0);
+ *
+ * SysFs interface :
+ *
+ * /sys/module/mmc_core/parameters/crc
+ *
+ * Enable / Disable CRC
+ *
+ * echo N > /sys/module/mmc_core/parameters/crc (Disabled) or
+ * echo 0 > /sys/module/mmc_core/parameters/crc (Disabled)
+ *
+ * echo Y > /sys/module/mmc_core/parameters/crc (Enabled) or
+ * echo 1 > /sys/module/mmc_core/parameters/crc (Enabled)
+*/
+
+int use_spi_crc = 0;
+EXPORT_SYMBOL(use_spi_crc);
+module_param_named(crc, use_spi_crc, int, 0644);
+MODULE_PARM_DESC(crc, "Enable/disable CRC");
 
 /*
  * We normally treat cards as removed during suspend if they are not
