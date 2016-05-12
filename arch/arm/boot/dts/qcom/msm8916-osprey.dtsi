@@ -1,0 +1,317 @@
+/* Copyright (c) 2014, Motorola Mobility LLC. All rights reserved.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 and
+* only version 2 as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*/
+
+#include "msm8916-moto-common.dtsi"
+#include "msm8916-camera-sensor-osprey.dtsi"
+#include "dsi-panel-mot-inx-500-720p-video.dtsi"
+#include "dsi-panel-mot-tdi-500-720p-video.dtsi"
+#include "dsi-panel-mot-boe-500-720p-video.dtsi"
+
+/ {
+	model = "Motorola Mobility MSM 8916 Osprey";
+	compatible = "qcom,msm8916-osprey", "qcom,msm8916-moto", "qcom,msm8916";
+};
+
+&tlmm_pinmux {
+	pmx_sdc2_clk {
+		sdc2_clk_on: clk_on {
+			drive-strength = <16>; /* 16 MA */
+		};
+	};
+
+	cc_alert {
+		qcom,pins = <&gp 49>;
+	};
+
+	dtv_enable_reset {
+		qcom,pins = <&gp 37>, <&gp 80>;
+	};
+
+	stml0xx_inputs {
+		qcom,pins = <&gp 51>, <&gp 52>, <&gp 38>, <&gp 4>;
+	};
+
+	stml0xx_wakeup {
+		qcom,pins = <&gp 116>;
+	};
+
+	ak09912_reset {
+		qcom,pins = <&gp 90>;
+		qcom,num-grp-pins = <1>;
+		qcom,pin-func = <0>;
+		label = "ak09912-reset";
+
+		ak09912_reset_default: ak09912-reset {
+			bias-disable;
+			drive-strength = <2>;
+			output-high;
+		};
+	};
+
+	ak09912_irq {
+		qcom,pins = <&gp 50>;
+		qcom,num-grp-pins = <1>;
+		qcom,pin-func = <0>;
+		label = "ak09912-irq";
+
+		ak09912_irq_default: ak09912-irq {
+			bias-disable;
+			drive-strength = <2>;
+		};
+	};
+
+	cam_sensor_front {
+		qcom,pins = <&gp 28>, <&gp 79>;
+	};
+
+	cam_sensor_front_sleep {
+		qcom,pins = <&gp 28>, <&gp 79>;
+	};
+};
+
+&spi_0 {
+	stml0xx: stml0xx@0 {
+		ct406_detect_threshold = <0x0096>;
+		ct406_undetect_threshold = <0x0073>;
+		ct406_pulse_count = <0x03>;
+		ct406_als_lux1_c0_mult = <0x386>;
+		ct406_als_lux1_c1_mult = <0x693>;
+		ct406_als_lux1_div = <0x80>;
+		ct406_als_lux2_c0_mult = <0x11F>;
+		ct406_als_lux2_c1_mult = <0x1DE>;
+		ct406_als_lux2_div = <0x80>;
+	};
+};
+
+&spi_5 {
+	/delete-node/ nmi326@0;
+};
+
+&i2c_6 {
+	status = "okay";
+
+	ak09912: ak09912@0C {
+		compatible = "ak,ak09912";
+		reg = <0x0C>;
+		gpios = <&msm_gpio 90 0>, /* RESET */
+		        <&msm_gpio 50 0>; /* IRQ */
+		pinctrl-names = "default";
+		pinctrl-0 = <&ak09912_reset_default &ak09912_irq_default>;
+		ak,layout = <5>;
+	};
+};
+
+&i2c_4 {
+	status = "disabled";
+};
+
+&i2c_1 {
+	bd65b60@64 {
+		rohm,led2-used;
+	};
+
+	tps65132@3e {
+		compatible = "ti,tps65132";
+		reg = <0x3e>;
+		ti,en-gpio-lpm;
+
+		regulators {
+			tps65132_pos: pos-boost {
+				regulator-name = "tps65132-pos";
+				regulator-min-microvolt = <5500000>;
+				regulator-max-microvolt = <5500000>;
+				ti,discharge-enable;
+				ti,enable-time = <800>;
+				ti,current-limit = <200000>;
+				ti,en-gpio = <&pm8916_gpios 3 0>;
+			};
+
+			tps65132_neg: neg-boost {
+				regulator-name = "tps65132-neg";
+				regulator-min-microvolt = <5500000>;
+				regulator-max-microvolt = <5500000>;
+				ti,discharge-enable;
+				ti,enable-time = <800>;
+				ti,current-limit = <40000>;
+				ti,en-gpio = <&pm8916_gpios 4 0>;
+			};
+		};
+	};
+
+	fan54046: fan54046-charger@6b {
+		compatible = "fairchild,fan54046-charger";
+		reg = <0x6b>;
+
+		interrupt-parent = <&msm_gpio>;
+		interrupts = <62 0x0>;
+		qcom,fan5404x-vadc = <&pm8916_vadc>;
+		qcom,fan5404x-adc_tm = <&pm8916_adc_tm>;
+		regulator-name = "fan54046_otg_vreg";
+
+		fairchild,bms-psy-name = "max170xx_battery";
+		fairchild,ext-temp-volt-mv = <4200>;
+		fairchild,oreg-voltage-mv = <4350>;
+		fairchild,low-voltage-uv = <3000000>;
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&fan5404x_int_default>;
+	};
+
+	max17050: max17050-battery@36 {
+		compatible = "maxim,max17050";
+		reg = <0x36>;
+		maxim,rsns-microohm = <10000>;
+
+		interrupt-parent = <&msm_gpio>;
+		interrupts = <49 0x0>;
+		gpios = <&msm_gpio 49 0x11>; /* GPIOF_DIR_IN|GPIOF_EXPORT */
+		gpio-names = "cc-alert";
+
+		maxim,enable_por_init;
+		maxim,batt_undervoltage_zero_soc;
+		maxim,batt-psy-name = "battery";
+		maxim,warm-temp-c = <45>;
+		maxim,hot-temp-c = <60>;
+		maxim,cool-temp-c = <0>;
+		maxim,cold-temp-c = <(-20)>;
+
+		maxim,valrt-threshold = <0xffa0>; /* Vmin 3.2V */
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&cc_alert_default>;
+
+		maxim,configuration {
+			df-serialnum	= "SNN5959";
+
+			/include/ "batterydata-fc40-sony.dtsi"
+			/include/ "batterydata-fc40-lg.dtsi"
+			/include/ "batterydata-fc40-samsung.dtsi"
+		};
+
+		maxim,temp-conv {
+			start	= /bits/ 16 <(-20)>;	/* in degrees C */
+			result	= /bits/ 16 <
+				/* 1/10th C "real" temps corresponding start, start + 1, etc. fuel gauge temps in C */
+				(-302) (-271) (-246) (-222) (-202) (-180) (-162) (-147) (-129) (-114)	/* -20 C ... -11 C */
+				(-101) (-86)  (-72)  (-59)  (-48)  (-35)  (-23)  (-12)  (-2)   10	/* -10 C ... -1  C */
+				22     32     42     51     62     72     82     91     99     110	/*  0  C ...  9  C */
+				120    129    138    146    156    165    175    184    192    200	/*  10 C ...  19 C */
+				210    220    230    238    247    256    266    275    285    294	/*  20 C ...  29 C */
+				303    313    324    333    343    353    364    375    385    395	/*  30 C ...  39 C */
+				407    419    430    441    453    466    479    492    505    520	/*  40 C ...  49 C */
+				534    548    565    581    597    616    635    654    676    697	/*  50 C ...  59 C */
+				721    747    775    800						/*  60 C ...  63 C */
+			>;
+		};
+	};
+};
+
+&pm8916_gpios {
+	gpio@c200 { /* GPIO 3 - DISP_VSP_EN */
+		status = "okay";
+		qcom,mode = <1>;	/* QPNP_PIN_MODE_DIG_OUT */
+		qcom,pull = <5>;	/* QPNP_PIN_PULL_NO */
+		qcom,vin-sel = <2>;	/* QPNP_PIN_VIN2 */
+		qcom,src-sel = <0>;	/* QPNP_PIN_SEL_FUNC_CONSTANT */
+		qcom,master-en = <1>;
+	};
+
+	gpio@c300 { /* GPIO 4 - DISP_VSN_EN */
+		status = "okay";
+		qcom,mode = <1>;	/* QPNP_PIN_MODE_DIG_OUT */
+		qcom,pull = <5>;	/* QPNP_PIN_PULL_NO */
+		qcom,vin-sel = <2>;	/* QPNP_PIN_VIN2 */
+		qcom,src-sel = <0>;	/* QPNP_PIN_SEL_FUNC_CONSTANT */
+		qcom,master-en = <1>;
+	};
+};
+
+&stml0xx {
+	gpios = <&msm_gpio 51 0>,        /* IRQ */
+		<&msm_gpio 120 0>,       /* RESET */
+		<&msm_gpio 121 0>,       /* BSLEN */
+		<&msm_gpio 52 0>,        /* WakeIRQ */
+		<&msm_gpio 4 0>,         /* SPI Ready for Receive */
+		<&msm_gpio 38 0>,        /* SPI Data Ack */
+		<&msm_gpio 116 0>;       /* Wake Up Sensor Hub */
+	accel_orientation_1 = <5>;	 /* Accel 1  Orientation value */
+	accel_orientation_2 = <5>;	 /* Accel 2  Orientation value */
+	accel_swap = <1>;            /* The accel parts are swapped left/right */
+};
+
+&soc {
+	vddio_disp_vreg: vddio_disp_vreg {
+		compatible = "regulator-fixed";
+		regulator-name = "vddio_disp";
+		gpio = <&msm_gpio 36 0>;
+		startup-delay-us = <300>;
+		enable-active-high;
+		regulator-boot-on;
+	};
+
+	vdda_touch_vreg: vdda_touch_vreg {
+		compatible = "regulator-fixed";
+		regulator-name = "vdda_touch";
+		gpio = <&msm_gpio 114 0>;
+		startup-delay-us = <300>;
+		enable-active-high;
+	};
+};
+
+&pm8916_l6 {
+	regulator-boot-on;
+};
+
+&tps65132_pos {
+	regulator-boot-on;
+};
+
+&tps65132_neg {
+	regulator-boot-on;
+};
+
+&mdss_dsi0 {
+	qcom,regulator-ldo-mode;
+	qcom,platform-regulator-settings =  [00 01 01 00 20 07 00];
+	qcom,dsi-pref-prim-pan = <&mot_inx_500_720p_vid_v0>;
+	vddio_disp-supply = <&vddio_disp_vreg>;
+	vsp_disp-supply = <&tps65132_pos>;
+	vsn_disp-supply = <&tps65132_neg>;
+};
+
+&i2c_2 {
+	synaptics_dsx_i2c@20 {
+		touch_vdd-supply = <&vdda_touch_vreg>;
+	};
+};
+
+&pm8916_l16 {
+	regulator-boot-on;
+	regulator-always-on;
+	qcom,init-voltage = <3300000>;
+};
+
+&secure_mem {
+	reg = <0 0 0 0x3C00000>;
+};
+
+&spmi_bus {
+	qcom,pm8916@1 {
+		qcom,vibrator@c000 {
+			status = "okay";
+			qcom,vib-timeout-ms = <30000>;
+			qcom,vib-vtg-level-mV = <2400>;
+			qcom,vib-vtg-level-mV-haptic = <2400>;
+			qcom,vib-boot-up-vibe-ms = <100>;
+		};
+	};
+};

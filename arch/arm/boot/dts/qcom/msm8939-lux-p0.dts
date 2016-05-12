@@ -1,0 +1,274 @@
+/* Copyright (c) 2014, Motorola Mobility LLC. All rights reserved.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 and
+* only version 2 as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*/
+
+/dts-v1/;
+
+#include "msm8939-lux.dtsi"
+
+/ {
+	qcom,board-id = <0x47 0x8000>;
+};
+
+&soc {
+	/delete-node/ isl98611a_pos;
+	/delete-node/ isl98611a_neg;
+
+	/delete-node/ slim@77c0000;
+	/delete-node/ sound;
+	sound {
+		compatible = "qcom,msm8x16-audio-codec";
+		qcom,tfa9890-left-name = "tfa9890.1-0034";
+		qcom,tfa9890-left-dai-name = "TFA9890 Playback Left";
+		qcom,model = "msm8939-tfa9890-codec-snd-card";
+		qcom,quat-auxpcm-gpio-sclk = <&msm_gpio 118 0>;
+		qcom,quat-auxpcm-gpio-ws =  <&msm_gpio 117 0>;
+		qcom,quat-auxpcm-gpio-dout = <&msm_gpio 119 0>;
+		qcom,quat-auxpcm-gpio-din = <&msm_gpio 112 0>;
+		qcom,msm-snd-card-id = <0>;
+		qcom,msm-codec-type = "internal";
+		qcom,msm-ext-pa = "quaternary";
+		qcom,msm-mbhc-hphl-swh = <0>;
+		qcom,msm-mbhc-gnd-swh = <0>;
+		qcom,msm-hs-micbias-type = "internal";
+		qcom,msm-micbias1-ext-cap;
+		qcom,msm-micbias2-ext-cap;
+		qcom,audio-routing =
+			"RX_BIAS", "MCLK",
+			"SPK_RX_BIAS", "MCLK",
+			"INT_LDO_H", "MCLK",
+			"MIC BIAS External", "Handset Mic",
+			"MIC BIAS External", "Headset Mic",
+			"MIC BIAS External", "Secondary Mic",
+			"AMIC1", "MIC BIAS External",
+			"AMIC2", "MIC BIAS External",
+			"AMIC3", "MIC BIAS External";
+		pinctrl-names = "cdc_lines_act",
+				"cdc_lines_sus",
+				"cdc_lines_quat_ext_act_lux",
+				"cdc_lines_quat_ext_sus_lux";
+		pinctrl-0 = <&cdc_pdm_lines_act>;
+		pinctrl-1 = <&cdc_pdm_lines_sus>;
+		pinctrl-2 = <&cdc_pdm_lines_act &ext_cdc_tlmm_lines_act_lux>;
+		pinctrl-3 = <&cdc_pdm_lines_sus &ext_cdc_tlmm_lines_sus_lux>;
+		asoc-platform = <&pcm0>, <&pcm1>, <&voip>, <&voice>,
+				<&loopback>, <&compress>, <&hostless>,
+				<&afe>, <&lsm>, <&routing>, <&lpa>, <&smartboost>;
+		asoc-platform-names = "msm-pcm-dsp.0", "msm-pcm-dsp.1",
+				"msm-voip-dsp", "msm-pcm-voice", "msm-pcm-loopback",
+				"msm-compress-dsp", "msm-pcm-hostless", "msm-pcm-afe",
+				"msm-lsm-client", "msm-pcm-routing", "msm-pcm-lpa";
+		asoc-cpu = <&dai_pri_auxpcm>, <&dai_hdmi>,
+				<&dai_mi2s0>, <&dai_mi2s1>, <&dai_mi2s2>, <&dai_mi2s3>,
+				<&sb_0_rx>, <&sb_0_tx>, <&sb_1_rx>, <&sb_1_tx>,
+				<&sb_3_rx>, <&sb_3_tx>, <&sb_4_rx>, <&sb_4_tx>,
+				<&bt_sco_rx>, <&bt_sco_tx>, <&int_fm_rx>, <&int_fm_tx>,
+				<&afe_pcm_rx>, <&afe_pcm_tx>, <&afe_proxy_rx>, <&afe_proxy_tx>,
+				<&incall_record_rx>, <&incall_record_tx>, <&incall_music_rx>,
+				<&incall_music_2_rx>;
+		asoc-cpu-names = "msm-dai-q6-auxpcm.1", "msm-dai-q6-hdmi.8",
+				"msm-dai-q6-mi2s.0", "msm-dai-q6-mi2s.1",
+				"msm-dai-q6-mi2s.2", "msm-dai-q6-mi2s.3",
+				"msm-dai-q6-dev.16384", "msm-dai-q6-dev.16385",
+				"msm-dai-q6-dev.16386", "msm-dai-q6-dev.16387",
+				"msm-dai-q6-dev.16390", "msm-dai-q6-dev.16391",
+				"msm-dai-q6-dev.16392", "msm-dai-q6-dev.16393",
+				"msm-dai-q6-dev.12288", "msm-dai-q6-dev.12289",
+				"msm-dai-q6-dev.12292", "msm-dai-q6-dev.12293",
+				"msm-dai-q6-dev.224", "msm-dai-q6-dev.225",
+				"msm-dai-q6-dev.241", "msm-dai-q6-dev.240",
+				"msm-dai-q6-dev.32771", "msm-dai-q6-dev.32772",
+				"msm-dai-q6-dev.32773", "msm-dai-q6-dev.32770";
+		asoc-codec = <&stub_codec>, <&pm8916_tombak_dig>;
+		asoc-codec-names = "msm-stub-codec.1", "tombak_codec";
+	};
+
+	dai_pri_auxpcm: qcom,msm-pri-auxpcm {
+		compatible = "qcom,msm-auxpcm-dev";
+		qcom,msm-cpudai-auxpcm-mode = <0>, <0>;
+		qcom,msm-cpudai-auxpcm-sync = <1>, <1>;
+		qcom,msm-cpudai-auxpcm-frame = <5>, <4>;
+		qcom,msm-cpudai-auxpcm-quant = <2>, <2>;
+		qcom,msm-cpudai-auxpcm-num-slots = <1>, <1>;
+		qcom,msm-cpudai-auxpcm-slot-mapping = <1>, <1>;
+		qcom,msm-cpudai-auxpcm-data = <0>, <0>;
+		qcom,msm-cpudai-auxpcm-pcm-clk-rate = <2048000>, <2048000>;
+		qcom,msm-auxpcm-interface = "primary";
+	};
+};
+
+&i2c_5 {
+	lp8556@2c {
+		status = "ok";
+		compatible = "ti,lp8556";
+		reg = <0x2c>;
+		bl-name = "lcd-backlight:0";
+		dev-ctrl = /bits/ 8 <0x85>;
+		init-brt = /bits/ 8 <0xff>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&backlight_reset_default>;
+	};
+
+	isl98611@29 {
+		status = "disabled";
+	};
+
+	tps65132@3e {
+		compatible = "ti,tps65132";
+		reg = <0x3e>;
+		ti,en-gpio-lpm;
+
+		regulators {
+			tps65132_pos: pos-boost {
+				regulator-name = "tps65132-pos";
+				regulator-min-microvolt = <5500000>;
+				regulator-max-microvolt = <5500000>;
+				ti,discharge-enable;
+				ti,enable-time = <800>;
+				ti,current-limit = <200000>;
+				ti,en-gpio = <&msm_gpio 16 0>;
+				regulator-boot-on;
+			};
+
+			tps65132_neg: neg-boost {
+				regulator-name = "tps65132-neg";
+				regulator-min-microvolt = <5500000>;
+				regulator-max-microvolt = <5500000>;
+				ti,discharge-enable;
+				ti,enable-time = <800>;
+				ti,current-limit = <40000>;
+				ti,en-gpio = <&msm_gpio 17 0>;
+				regulator-boot-on;
+			};
+		};
+	};
+};
+
+&i2c_6 {
+
+	ak09912: ak09912@0C {
+		ak,layout = <5>;
+	};
+};
+
+&mdss_dsi0 {
+	vsp_disp-supply = <&tps65132_pos>;
+	vsn_disp-supply = <&tps65132_neg>;
+};
+
+&pm8916_mpps {
+	mpp@a100 { /* MPP 2 */
+		/* CCP_RESOUT_N */
+		status = "ok";
+		qcom,mode = <0>;      /* Digital Input */
+		qcom,vin-sel = <2>;   /* VIN 2 (1.8V) */
+		qcom,src-sel = <0>;   /* GPIO */
+		qcom,ain-route = <1>; /* QPNP_PIN_AIN_AMUX_CH6 */
+		qcom,master-en = <1>; /* Enable MPP */
+	};
+};
+
+&i2c_4 {
+	/delete-node/ synaptics_dsx_i2c_tdi@20;
+	/delete-node/ synaptics_dsx_i2c_lgd@20;
+};
+
+&i2c_0 {
+	qcom,clk-freq-out = <400000>;
+
+	status = "ok";
+	synaptics_dsx_i2c@20 {
+		compatible = "synaptics,synaptics_dsx_i2c";
+		reg = <0x20>;
+		interrupt-parent = <&msm_gpio>;
+		interrupts = <21 0>;
+		gpios = <&msm_gpio 21 0>, /* IRQ */
+			<&msm_gpio 20 0>; /* RESET */
+		synaptics,gpio-config;
+		pinctrl-names = "default", "active";
+		pinctrl-0 = <&touch_reset_active &touch_int_default>;
+		pinctrl-1 = <&touch_reset_active &touch_int_active>;
+		touchstate_modes {
+			touchmode-default = <&default_active &default_suspended>;
+		};
+		default_active: touchstate_default_active {
+			patch-data = "";
+		};
+		default_suspended: touchstate_aod_suspended {
+			patch-data = "F12@20=0505,23=3,23:1=1;F1@0=1&3";
+		};
+	};
+};
+
+&spi_2 {
+	status = "disabled";
+
+	/delete-node/ florida@0;
+};
+
+&tlmm_pinmux {
+	stml0xx_inputs {
+		qcom,pins = <&gp 51>, <&gp 52>, <&gp 38>, <&gp 5>;
+	};
+
+	ext-cdc-tlmm-lines-lux {
+		qcom,pins = <&gp 112>, <&gp 117>,
+				<&gp 118>, <&gp 119>;
+		qcom,num-grp-pins = <4>;
+		qcom,pin-func = <1>;
+		label = "ext-cdc-tlmm-lines-lux";
+		ext_cdc_tlmm_lines_act_lux: tlmm_lines_on_lux {
+			drive-strength = <8>;
+			bias-disable;
+		};
+		ext_cdc_tlmm_lines_sus_lux: tlmm_lines_off_lux {
+			drive-strength = <2>;
+			bias-pull-down;
+		};
+	};
+};
+
+&spi_0 {
+	stml0xx: stml0xx@0 {
+		gpios = <&msm_gpio 51 0>,        /* IRQ */
+			<&msm_gpio 120 0>,       /* RESET */
+			<&msm_gpio 121 0>,       /* BSLEN */
+			<&msm_gpio 52 0>,        /* WakeIRQ */
+			<&msm_gpio 5 0>,         /* SPI Ready for Receive */
+			<&msm_gpio 38 0>,        /* SPI Data Ack */
+			<&msm_gpio 116 0>;       /* Wake Up Sensor Hub */
+	};
+};
+
+&sdhc_2 {
+	cd-gpios = <&msm_gpio 25 0x1>;
+};
+
+&pm8916_vadc {
+	/delete-node/ chan@11;
+};
+
+&pm8916_gpios {
+	gpio@c200 { /* GPIO 3 */
+		status = "disabled";
+	};
+};
+
+&pm8916_mpps {
+	mpp@a100 { /* MPP 2 */
+		status = "disabled";
+	};
+};
+
+&usb_otg {
+	qcom,hsusb-otg-mode = <1>;
+	/delete-node/ qcom,usbid-gpio;
+};

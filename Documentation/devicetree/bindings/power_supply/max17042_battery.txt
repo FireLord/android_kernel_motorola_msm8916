@@ -1,0 +1,154 @@
+max17042_battery
+~~~~~~~~~~~~~~~~
+
+Required properties :
+ - compatible : "maxim,max17042"
+
+Optional properties :
+ - maxim,rsns-microohm : Resistance of rsns resistor in micro Ohms
+                         (datasheet-recommended value is 10000).
+   Defining this property enables current-sense functionality.
+
+ - maxim,regs-init-data : Initialization data for device registers specified as
+   register address and value pairs.
+
+ - gpios : GPIOs used by the device, such as an interrupt line.
+
+ - gpio-names : List of strings with GPIO names.
+
+ - maxim,enable_por_init : Define this property to execute POR init from Maxim
+   appnote.
+
+ - maxim,batt_undervoltage_zero_soc : Define this property to report "0" SOC
+   if and only if battery undervoltage interrupt has fired.
+
+ - maxim,valrt-threshold : Define this property to override the default min and
+   max voltage alert thresholds. This will program the Valrt threshold register
+   with the given value.
+
+ - maxim,batt_psy_name : Define this property to send notifications to another
+   battery driver.
+
+ - maxim,warm-temp-c : Define this property to set Warm Temperature Level
+
+ - maxim,hot-temp-c : Define this property to set Hot Temperature Level
+
+ - maxim,cool-temp-c : Define this property to set Cool Temperature Level
+
+ - maxim,cold-temp-c : Define this property to set Cold Temperature Level
+
+Optional subnodes:
+ - maxim,configuration : Contains configuraiton data for POR initialization
+   of the device defined in Maxim appnote. This data is either specific to how
+   the host device is used  or battery specific characteristic.
+
+ - maxim,temp-conv : Contains a table to convert a value from Temperature
+   register to a "real" temp value. This conversion table should be used when
+   configuring tgain and toff is not sufficient to get accurate temperature
+   measurements.
+
+Required "maxim,configuration" node properties :
+ - config : CONFIG register value (u16) specific to the device application.
+ - full_soc_thresh : FullSOCThr register value (u16). The appnote has a
+   recommended value.
+ - design_cap : DesignCap register value (u16)specific to the battery.
+ - ichgt_term : ICHGTerm register value (u16). The appnote has a recommended
+   value.
+ - learn_cfg : LearnCFG register value (u16). The appnote has a recommended
+   value.
+ - filter_cfg : FilterCFG register value (u16). The appnote has a recommended
+   value.
+ - relax_cfg : RelaxCFG register value (u16) specific to the device
+   application.
+ - fullcap : FullCAP register value (u16) specific to the battery.
+ - fullcapnom : FullCapNom register value (u16) specific to the battery.
+ - qrtbl00 : QResidual 00 register value (u16) specific to the battery.
+ - qrtbl10 : QResidual 10 register value (u16) specific to the battery.
+ - qrtbl20 : QResidual 20 register value (u16) specific to the battery.
+ - qrtbl30 : QResidual 30 register value (u16) specific to the battery.
+ - rcomp0 : RCOMP0 register value (u16) specific to the battery.
+ - tcompc0 : TempCo register value (u16) specific to the battery.
+ - maxim,cell-char-tbl : Battery characterization table containing 48 words
+   (u16).
+
+Optional "maxim,configuration" node properties :
+ - tgain : TGAIN register value (u16) specific to the thermistor
+ - toff : TOFF register value (u16) specific to the thermistor
+ - cgain : CGAIN register value (u16) specific to the current sense
+ - coff : COFF register value (u16) specific to the current sense
+ - misc_cfg : MiscCFG register value (u16) specific to the device
+   application.
+
+Required "maxim,temp-conv" properties :
+ - start : Fuel gauge temperature value (u16) in C for the first element in
+   in the "result" table.
+ - result : Conversion table with temperature values (u16) in 1/10 C.  The
+   result[0] corresponds to start temp, result[1] to (start + 1) temp, etc.
+
+Example:
+
+	battery-charger@36 {
+		compatible = "maxim,max17042";
+		reg = <0x36>;
+		maxim,rsns-microohm = <10000>;
+		maxim,regs-init-data = <
+			0x01 0xffb4 /* VALRT, VMAX = 5.1V and VMIN = 3.6V */
+		>;
+		gpios = <&gpio5 12 0x1>;
+		gpio-names = "alert-pin";
+		maxim,enable_por_init;
+		maxim,batt_undervoltage_zero_soc;
+		maxim,warm-temp-c = <45>;
+		maxim,hot-temp-c = <60>;
+		maxim,cool-temp-c = <0>;
+		maxim,cold-temp-c = <(-20)>;
+
+		maxim,configuration {
+			/* Required properties */
+			config		= /bits/ 16 <0x2250>;
+			full_soc_thresh	= /bits/ 16 <0x5F00>;
+			design_cap	= /bits/ 16 <320>;
+			ichgt_term	= /bits/ 16 <0x0066>;
+			learn_cfg	= /bits/ 16 <0x2606>;
+			filter_cfg	= /bits/ 16 <0x87A4>;
+			relax_cfg	= /bits/ 16 <0x016C>;
+			fullcap		= /bits/ 16 <320>;
+			fullcapnom	= /bits/ 16 <320>;
+			qrtbl00		= /bits/ 16 <0x1804>;
+			qrtbl10		= /bits/ 16 <0x0B00>;
+			qrtbl20		= /bits/ 16 <0x0700>;
+			qrtbl30		= /bits/ 16 <0x0600>;
+			rcomp0 		= /bits/ 16 <0x0051>;
+			tcompc0		= /bits/ 16 <0x242E>;
+			maxim,cell-char-tbl = /bits/ 16 <
+				0x9FB0 0xB5E0 0xB800 0xBA00 0xBB10 0xBC30
+				0xBC90 0xBD00 0xBDA0 0xBE40 0xBFA0 0xC250
+				0xC4C0 0xC7B0 0xCB70 0xCDD0 0x0100 0x0F10
+				0x1000 0x1300 0x1200 0x3CE0 0x3470 0x1BF0
+				0x1B90 0x1800 0x0C60 0x0DE0 0x0C80 0x0BF0
+				0x0450 0x0450 0x0080 0x0080 0x0080 0x0080
+				0x0080 0x0080 0x0080 0x0080 0x0080 0x0080
+				0x0080 0x0080 0x0080 0x0080 0x0080 0x0080
+			>;
+			/* Optional properties */
+			tgain		= /bits/ 16 <0xE71C>;
+			toff		= /bits/ 16 <0x251A>;
+			cgain		= /bits/ 16 <0x4000>;
+			coff		= /bits/ 16 <0xFFE3>;
+			misc_cfg	= /bits/ 16 <0x0170>;
+		}
+		maxim,temp-conv {
+			start	= /bits/ 16 <(-20)>;	/* in degrees C */
+			result	= /bits/ 16 <		/* in 1/10 degrees C */
+				(-302) (-271) (-246) (-222) (-202) (-180) (-162) (-147) (-129) (-114)
+				(-101) (-86)  (-72)  (-59)  (-48)  (-35)  (-23)  (-12)  (-2)   10
+				22     32     42     51     62     72     82     91     99     110
+				120    129    138    146    156    165    175    184    192    200
+				210    220    230    238    247    256    266    275    285    294
+				303    313    324    333    343    353    364    375    385    395
+				407    419    430    441    453    466    479    492    505    520
+				534    548    565    581    597    616    635    654    676    697
+				721    747    775    800
+			>;
+		};
+	};

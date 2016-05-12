@@ -1,0 +1,234 @@
+/* Copyright (c) 2014, Motorola Mobility LLC. All rights reserved.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 and
+* only version 2 as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*/
+
+#include "msm8939-moto-common.dtsi"
+#include "dsi-panel-mot-tdi-546-1080p-cmd.dtsi"
+#include "dsi-panel-mot-lgd-546-1080p-cmd.dtsi"
+#include "dsi-panel-mot-dummy-qhd-video.dtsi"
+#include "msm8939-camera-sensor-lux.dtsi"
+
+/ {
+	model = "Motorola Mobility MSM 8936 Lux";
+	compatible = "qcom,msm8936-lux", "qcom,msm8936-moto", "qcom,msm8936";
+};
+
+&soc {
+	vddio_disp_vreg_tdi: vddio_disp_vreg_tdi {
+		status = "/chosen", "mmi,panel_name", "mipi_mot_cmd_tdi_1080p_546";
+		compatible = "regulator-fixed";
+		regulator-name = "vddio_disp_tdi";
+		gpio = <&msm_gpio 36 0>;
+		vin-supply = <&pm8916_l6>;
+		startup-delay-us = <300>;
+		enable-active-high;
+		regulator-boot-on;
+	};
+
+	vddio_disp_vreg_lgd: vddio_disp_vreg_lgd {
+		status = "/chosen", "mmi,panel_name", "mipi_mot_cmd_lgd_1080p_546";
+		compatible = "regulator-fixed";
+		regulator-name = "vddio_disp_lgd";
+		gpio = <&msm_gpio 36 0>;
+		vin-supply = <&pm8916_l6>;
+		startup-delay-us = <300>;
+		enable-active-high;
+		regulator-boot-on;
+		regulator-always-on;
+	};
+
+	isl98611a_pos: isl98611a_pos {
+		compatible = "regulator-fixed";
+		regulator-name = "vsp_disp";
+		gpio = <&msm_gpio 16 0>;
+		startup-delay-us = <300>;
+		enable-active-high;
+		regulator-boot-on;
+	};
+
+	isl98611a_neg: isl98611a_neg {
+		compatible = "regulator-fixed";
+		regulator-name = "vsn_disp";
+		gpio = <&msm_gpio 17 0>;
+		startup-delay-us = <300>;
+		enable-active-high;
+		regulator-boot-on;
+	};
+};
+
+&i2c_4 {
+	/delete-node/ ncp6335d-regulator@1c;
+};
+
+&i2c_6 {
+
+	ncp6335d: ncp6335d-regulator@1c {
+		compatible = "onnn,ncp6335d-regulator";
+		reg = <0x1c>;
+		onnn,vsel = <0>;
+		onnn,slew-ns = <3333>;
+		onnn,step-size = <6250>;
+		onnn,min-slew-ns = <416>;
+		onnn,max-slew-ns = <3333>;
+		regulator-min-microvolt = <1050000>;
+		regulator-max-microvolt = <1350000>;
+		onnn,min-setpoint = <600000>;
+		pintrl-names = "default";
+		pinctrl-0 = <&ext_buck_vsel_default>;
+		onnn,vsel-gpio = <&msm_gpio 111 1>;
+		onnn,discharge-enable;
+		onnn,restore-reg;
+		onnn,set-en-always;
+	};
+};
+
+
+&mdss_mdp {
+	qcom,mdss-pref-prim-intf = "dsi";
+};
+
+&pmx_mdss_te {
+	qcom,num-grp-pins = <1>;
+	qcom,pins = <&gp 24>;
+};
+
+&pmx_mdss {
+	qcom,num-grp-pins = <1>;
+	qcom,pins = <&gp 78>;
+};
+
+&pm8916_l6 {
+	regulator-always-on;
+	regulator-boot-on;
+};
+
+&pm8916_l16 {
+	qcom,init-voltage = <3100000>;
+	regulator-always-on;
+	regulator-boot-on;
+};
+
+&pm8916_l17 {
+	regulator-always-on;
+	regulator-boot-on;
+};
+
+&mdss_dsi0 {
+	qcom,dsi-pref-prim-pan = <&mot_tdi_546_1080p_cmd_v1>;
+	tp_vci-supply = <&pm8916_l16>;
+	vddio_disp_tdi-supply = <&vddio_disp_vreg_tdi>;
+	vddio_disp_lgd-supply = <&vddio_disp_vreg_lgd>;
+	vsp_disp-supply = <&isl98611a_pos>;
+	vsn_disp-supply = <&isl98611a_neg>;
+
+	pinctrl-names = "mdss_default", "mdss_sleep";
+	pinctrl-0 = <&mdss_dsi_active &mdss_te_active>;
+	pinctrl-1 = <&mdss_dsi_suspend &mdss_te_suspend>;
+	qcom,platform-reset-gpio = <&msm_gpio 78 0>;
+};
+
+&mdss_dsi1 {
+	status = "disabled";
+};
+
+&pm8916_vadc {
+	/delete-node/ chan@b;
+
+	chan@11 {
+		label = "host_det";
+		reg = <0x11>;
+		qcom,decimation = <0>;
+		qcom,pre-div-channel-scaling = <0>;
+		qcom,calibration-type = "absolute";
+		qcom,scale-function = <0>;
+		qcom,hw-settle-time = <0>;
+		qcom,fast-avg-setup = <0>;
+	};
+
+	chan@13 {
+		label = "msm_therm";
+		reg = <0x13>;
+		qcom,decimation = <0>;
+		qcom,pre-div-channel-scaling = <0>;
+		qcom,calibration-type = "ratiometric";
+		qcom,scale-function = <2>;
+		qcom,hw-settle-time = <2>;
+		qcom,fast-avg-setup = <0>;
+	};
+
+	chan@31 {
+		label = "chg_therm";
+		reg = <0x31>;
+		qcom,decimation = <0>;
+		qcom,pre-div-channel-scaling = <0>;
+		qcom,calibration-type = "ratiometric";
+		qcom,scale-function = <2>;
+		qcom,hw-settle-time = <2>;
+		qcom,fast-avg-setup = <0>;
+	};
+};
+
+&pm8916_mpps {
+	mpp@a100 { /* MPP 2 */
+		status = "okay";
+		qcom,mode = <0>; /* DIG_IN input */
+		qcom,master-en = <1>; /* Enable MPP */
+		qcom,pull = <1>;          /* QPNP_PIN_MPP_PULL_UP_OPEN */
+		qcom,vin-sel = <3>;       /* LDO6 1.8V */
+		qcom,src-sel = <0>;       /* Constant */
+	};
+	mpp@a300 { /* MPP 4 */
+		status = "okay";
+		qcom,mode = <4>; /* AIN input */
+		qcom,invert = <1>; /* Enable MPP */
+		qcom,ain-route = <3>; /* AMUX 8 */
+		qcom,master-en = <1>; /* Enable MPP */
+		qcom,src-sel = <0>; /* Function constant */
+	};
+};
+
+&usb_otg {
+	qcom,hsusb-otg-mode = <3>;
+	qcom,usbid-gpio = <&pm8916_mpps 2 0>;
+	qcom,usbin-vadc = <&pm8916_vadc>;
+	vbus_otg-supply = <&smb1357_otg_vreg>;
+	mpp-id-routing;
+	mpp-id-amux-chan = <1>;              /* QPNP_PIN_AIN_AMUX_CH6 */
+	mpp-id-pull = <1>;                   /* QPNP_PIN_MPP_PULL_UP_OPEN */
+	mpp-id-vin = <3>;                    /* LDO6 1.8V */
+	qcom,hsusb-otg-factory-phy-init-seq =
+		<0x00 0x80 0x1F 0x81 0x32 0x82 0x3F 0x83 0xffffffff>;
+};
+&soc {
+qcom,bcl {
+		compatible = "qcom,bcl";
+		qcom,bcl-enable;
+		qcom,ibat-vadc = <&pm8916_vadc>;
+		qcom,ibat-threshold-adc_tm = <&pm8916_adc_tm>;
+		qcom,bcl-hotplug-list = <&CPU0 &CPU1 &CPU2 &CPU3 >;
+		qcom,ibat-monitor {
+			high-threshold-uamp = <3000000>;
+			low-threshold-uamp = <1000000>;
+			mitigation-freq-khz = <1113600>;
+			mitigation-gpu-freq-khz = <310000>;
+			max-gpu-freq-khz = <400000>;
+			ibat-channel = <0x15>;
+			adc-interval-usec = <3900>;
+			uv-to-ua-numerator = <2>;
+			uv-to-ua-denominator = <1>;
+			vph-channel = <0x06>;
+			vph-high-threshold-uv = <3630000>;
+			vph-low-threshold-uv = <3500000>;
+			thermal-handle = <&msm_thermal_freq>;
+			charge-ic-handle = <&smb1357_otg_vreg>;
+		};
+	};
+};

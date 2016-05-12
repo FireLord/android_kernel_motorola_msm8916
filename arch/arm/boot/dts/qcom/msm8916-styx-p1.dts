@@ -1,0 +1,48 @@
+/* Copyright (c) 2014, Motorola Mobility LLC. All rights reserved.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 and
+* only version 2 as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*/
+
+/dts-v1/;
+
+#include "msm8916-styx.dtsi"
+
+/ {
+	qcom,board-id = <0x42 0x8100>;
+};
+
+&max17050 {
+	maxim,valrt-threshold = <0xffaf>; /* Vmin 3.5V */
+};
+
+&i2c_1 {
+	fsa8500@23 {
+		status = "ok";
+	};
+	lm3697@36 {
+		status = "ok";
+	};
+	bd65b60@64 {
+		status = "disabled";
+	};
+};
+
+&spi_0 {
+	stml0xx@0 {
+		gpios = <&msm_gpio 115 0>,       /* IRQ */
+			<&msm_gpio 120 0>,       /* RESET */
+			<&msm_gpio 121 0>,       /* BSLEN */
+			<&msm_gpio 113 0>,       /* WakeIRQ */
+			<&msm_gpio 4 0>,         /* SPI Ready for Receive */
+			<&msm_gpio 38 0>;        /* SPI Data Ack */
+		headset_detect_enable = <0>;
+		headset_hw_version = <0>;
+	};
+};

@@ -1,0 +1,147 @@
+/* Copyright (c) 2014, Motorola Mobility LLC. All rights reserved.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 and
+* only version 2 as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*/
+
+/dts-v1/;
+
+#include "msm8916-osprey.dtsi"
+
+/ {
+	qcom,board-id = <0x44 0x8000>;
+};
+
+&tlmm_pinmux {
+	pmx_sdc2_clk {
+		sdc2_clk_on: clk_on {
+			drive-strength = <12>; /* 12 MA */
+		};
+	};
+};
+
+&i2c_1 {
+	fsa8500@23 {
+		status = "ok";
+	};
+};
+
+&usb_otg {
+	/delete-node/ qcom,usbin-vadc;
+};
+
+&stml0xx {
+	headset_detect_enable = <0>;
+	headset_hw_version = <0>;
+};
+
+&soc {
+	/delete-node/ vddio_disp_vreg;
+	/delete-node/ vdda_touch_vreg;
+};
+
+&mdss_dsi0 {
+	vddio_disp-supply = <&pm8916_l6>;
+};
+
+&i2c_2 {
+	synaptics_dsx_i2c@20 {
+		touch_vdd-supply = <&pm8916_l16>;
+	};
+};
+
+&pm8916_l16 {
+	/delete-property/ regulator-boot-on;
+	/delete-property/ regulator-always-on;
+};
+
+&mot_inx_500_720p_vid_v0 {
+	/delete-property/ qcom,mdss-dsi-on-command;
+	qcom,mdss-dsi-on-command = [
+		29 01 00 00 00 00 06 F0 55 AA 52 08 00	/* Page 0 */
+		29 01 00 00 00 00 0B E8 F3 D9 CC C0 B8 B0 A0 A0 A0 9C	/* Brightness control for Moving Mode */
+		29 01 00 00 00 00 03 D9 03 06	/* Set PWM freq. at 32.55k Hz*/
+		29 01 00 00 00 00 02 EA 09		/* PWM compensation */
+		05 01 00 00 78 00 02 11 00		/* Exit sleep */
+		15 01 00 00 00 00 02 51 FF		/* Brightness */
+		15 01 00 00 00 00 02 53 2C		/* CTRL Display */
+		15 01 00 00 00 00 02 55 01		/* UI CABC mode */
+		05 01 00 00 00 00 02 29 00];	/* Display on */
+	/delete-property/ qcom,mdss-dsi-hbm-on-command;
+	/delete-property/ qcom,mdss-dsi-hbm-off-command;
+};
+
+&mot_tdi_500_720p_vid_v0 {
+	/delete-property/ qcom,mdss-dsi-pre-on-command;
+	qcom,mdss-dsi-pre-on-command = [
+		/* CTRL Display */
+		15 01 00 00 00 00 02 53 2C
+		/* Brightness */
+		15 01 00 00 00 00 02 51 FF
+		/* UI CABC mode */
+		15 01 00 00 00 00 02 55 01];
+	/delete-property/ qcom,mdss-dsi-hbm-on-command;
+	/delete-property/ qcom,mdss-dsi-hbm-off-command;
+};
+
+&mot_boe_500_720p_vid_v0 {
+	/delete-property/ qcom,mdss-dsi-on-command;
+	qcom,mdss-dsi-on-command = [
+		/* Clear driver IC previous state */
+		29 01 00 00 00 00 05 FF AA 55 25 01
+		29 01 00 00 01 00 02 FC 08
+		29 01 00 00 00 00 02 FC 00
+		29 01 00 00 14 00 05 FF AA 55 25 00
+
+		/* MIPI lanes setting */
+		29 01 00 00 00 00 05 FF AA 55 25 01
+		29 01 00 00 00 00 02 6F 16
+		/* 4 lanes */
+		29 01 00 00 00 00 02 F7 00
+		/* End of MIPI lanes setting */
+		29 01 00 00 00 00 05 FF AA 55 25 00
+
+		/* Page 0 selected */
+		29 01 00 00 00 00 06 F0 55 AA 52 08 00
+
+		/* Brightness control for Moving Mode */
+		29 01 00 00 00 00 0B E8 F3 D9 CC C0 B8 B0 A0 A0 A0 9C
+		/* Set PWM freq. at 32.55k Hz*/
+		29 01 00 00 00 00 03 D9 03 06
+		/* PWM compensation */
+		29 01 00 00 00 00 02 EA 09
+
+		/* CE mode setting */
+		29 01 00 00 00 00 07 CC 00 00 00 00 00 00
+		29 01 00 00 00 00 0D CE 10 10 10 10 10 10 10 10 10 10 10 10
+		29 01 00 00 00 00 11 D1 00 00 00 01 01 01 01 01 01 01 01 01 02 02 02 02
+		29 01 00 00 00 00 0D D7 30 30 30 30 30 30 30 30 30 30 30 30
+		29 01 00 00 00 00 0D D8 30 30 30 30 30 30 30 30 30 30 30 30
+		29 01 00 00 00 00 0B E7 F0 E4 DE D7 D0 CB C9 C6 C3 C0
+
+		/* CMD 2 disable */
+		29 01 00 00 00 00 06 F0 55 AA 52 00 00
+
+		/* Disable TE output */
+		05 01 00 00 00 00 01 34
+		/* Brightness */
+		15 01 00 00 00 00 02 51 FF
+		/* Display control */
+		15 01 00 00 00 00 02 53 2C
+		/* CABC mode */
+		15 01 00 00 00 00 02 55 01
+		/* rotate 180 degree */
+		15 01 00 00 00 00 02 36 03
+		/* Sleep out */
+		05 01 00 00 78 00 01 11
+		/* Display On */
+		05 01 00 00 00 00 01 29];
+	/delete-property/ qcom,mdss-dsi-hbm-on-command;
+	/delete-property/ qcom,mdss-dsi-hbm-off-command;
+};

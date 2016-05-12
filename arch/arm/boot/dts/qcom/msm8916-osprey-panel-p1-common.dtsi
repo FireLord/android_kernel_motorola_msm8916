@@ -1,0 +1,96 @@
+
+&mot_inx_500_720p_vid_v0 {
+	/delete-property/ qcom,mdss-dsi-on-command;
+	qcom,mdss-dsi-on-command = [
+		/* Select page 0 */
+		29 01 00 00 00 00 06 F0 55 AA 52 08 00
+		/* Brightness control for Moving Mode */
+		29 01 00 00 00 00 0B E8 F3 D9 CC C0 B8 B0 A0 A0 A0 9C
+		/* Set PWM freq. at 32.55k Hz*/
+		29 01 00 00 00 00 03 D9 03 06
+		/* PWM compensation */
+		29 01 00 00 00 00 02 EA 09
+		/* Exit sleep */
+		05 01 00 00 78 00 02 11 00
+		/* Brightness */
+		15 01 00 00 00 00 02 51 FF
+		/* CTRL Display */
+		15 01 00 00 00 00 02 53 2C
+		/* UI CABC mode */
+		15 01 00 00 00 00 02 55 01
+		/* Rotate display 180 degree */
+		15 01 00 00 00 00 02 36 03
+		/* Display on */
+		05 01 00 00 00 00 02 29 00];
+	/delete-property/ qcom,mdss-dsi-hbm-on-command;
+	/delete-property/ qcom,mdss-dsi-hbm-off-command;
+};
+
+&mot_tdi_500_720p_vid_v0 {
+	/delete-property/ qcom,mdss-dsi-pre-on-command;
+	qcom,mdss-dsi-pre-on-command = [
+		/* CTRL Display */
+		15 01 00 00 00 00 02 53 2C
+		/* Brightness */
+		15 01 00 00 00 00 02 51 FF
+		/* UI CABC mode */
+		15 01 00 00 00 00 02 55 01
+		/* Rotate display 180 degree */
+		15 01 00 00 00 00 02 36 C0];
+	/delete-property/ qcom,mdss-dsi-hbm-on-command;
+	/delete-property/ qcom,mdss-dsi-hbm-off-command;
+};
+
+&mot_boe_500_720p_vid_v0 {
+	/delete-property/ qcom,mdss-dsi-on-command;
+	qcom,mdss-dsi-on-command = [
+		/* Clear driver IC previous state */
+		29 01 00 00 00 00 05 FF AA 55 25 01
+		29 01 00 00 01 00 02 FC 08
+		29 01 00 00 00 00 02 FC 00
+		29 01 00 00 14 00 05 FF AA 55 25 00
+
+		/* MIPI lanes setting */
+		29 01 00 00 00 00 05 FF AA 55 25 01
+		29 01 00 00 00 00 02 6F 16
+		/* 4 lanes */
+		29 01 00 00 00 00 02 F7 00
+		/* End of MIPI lanes setting */
+		29 01 00 00 00 00 05 FF AA 55 25 00
+
+		/* Page 0 selected */
+		29 01 00 00 00 00 06 F0 55 AA 52 08 00
+
+		/* Brightness control for Moving Mode */
+		29 01 00 00 00 00 0B E8 F3 D9 CC C0 B8 B0 A0 A0 A0 9C
+		/* Set PWM freq. at 32.55k Hz*/
+		29 01 00 00 00 00 03 D9 03 06
+		/* PWM compensation */
+		29 01 00 00 00 00 02 EA 09
+
+		/* CE mode setting */
+		29 01 00 00 00 00 07 CC 00 00 00 00 00 00
+		29 01 00 00 00 00 0D CE 10 10 10 10 10 10 10 10 10 10 10 10
+		29 01 00 00 00 00 11 D1 00 00 00 01 01 01 01 01 01 01 01 01 02 02 02 02
+		29 01 00 00 00 00 0D D7 30 30 30 30 30 30 30 30 30 30 30 30
+		29 01 00 00 00 00 0D D8 30 30 30 30 30 30 30 30 30 30 30 30
+		29 01 00 00 00 00 0B E7 F0 E4 DE D7 D0 CB C9 C6 C3 C0
+
+		/* CMD 2 disable */
+		29 01 00 00 00 00 06 F0 55 AA 52 00 00
+
+		/* Disable TE output */
+		05 01 00 00 00 00 01 34
+		/* Brightness */
+		15 01 00 00 00 00 02 51 FF
+		/* Display control */
+		15 01 00 00 00 00 02 53 2C
+		/* CABC mode */
+		15 01 00 00 00 00 02 55 01
+		/* Sleep out */
+		05 01 00 00 78 00 01 11
+		/* Display On */
+		05 01 00 00 00 00 01 29];
+	/delete-property/ qcom,mdss-dsi-hbm-on-command;
+	/delete-property/ qcom,mdss-dsi-hbm-off-command;
+};
