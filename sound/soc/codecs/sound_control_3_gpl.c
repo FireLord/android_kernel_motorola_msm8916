@@ -31,8 +31,9 @@
 extern struct snd_soc_codec *fauxsound_codec_ptr;
 extern int wcd9xxx_hw_revision;
 
-// Prema Chand Alugu (premaca@gmail.com) Make this default ON
-int snd_ctrl_enabled = 1;
+// Prema Chand Alugu (premaca@gmail.com), psndna88@xda
+// Make this default OFF
+int snd_ctrl_enabled = 0;
 static int snd_ctrl_locked = 0;
 static int snd_rec_ctrl_locked = 0;
 #ifdef UNSUPPORTED_MSM8x16_WCD
