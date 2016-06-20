@@ -5721,7 +5721,6 @@ static int synaptics_dsx_panel_cb(struct notifier_block *nb,
 	struct fb_event *evdata = data;
 	struct synaptics_rmi4_data *rmi4_data =
 		container_of(nb, struct synaptics_rmi4_data, panel_nb);
-
 #ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
 	bool prevent_sleep = (dt2w_switch > 0);
 			if (prevent_sleep) {
@@ -5730,7 +5729,7 @@ static int synaptics_dsx_panel_cb(struct notifier_block *nb,
 				return 0;
 			} else {
 #endif
-
+	if ((event == rmi4_data->event_blank || event == FB_EVENT_BLANK) &&
 			evdata && evdata->info && evdata->info->node == 0 &&
 			evdata->data && rmi4_data) {
 		int *blank = evdata->data;
