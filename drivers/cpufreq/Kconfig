@@ -530,12 +530,12 @@ config CPU_FREQ_GOV_BARRY_ALLEN
 
 	  If in doubt, say N. 	
 
-config CPU_FREQ_GOV_INTELLIDEMAND
-	tristate "'intellidemand' cpufreq governor"
-	depends on CPU_FREQ
-
 config CPU_FREQ_GOV_AUTHORITY
 	tristate "'authority' cpufreq policy governor"
+
+config CPU_FREQ_GOV_ELECTRODEMAND
+ 	tristate "'electrodemand' cpufreq policy governor"
+        depends on CPU_FREQ
 
 config GENERIC_CPUFREQ_CPU0
 	tristate "Generic CPU0 cpufreq driver"
