@@ -821,11 +821,11 @@ end:
 		pdata->panel_info.cabc_mode = CABC_UI_MODE;
 
 	pr_info("%s-. Pwr_mode(0x0A) = 0x%x\n", __func__, pwr_mode);
+
 #ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
-	if (prevent_sleep) {
 	dt2w_scr_suspended = false;
-	}
 #endif
+
 	return 0;
 }
 
@@ -891,11 +891,11 @@ end:
 		pdata->panel_info.cabc_mode = CABC_OFF_MODE;
 
 	pr_info("%s-:\n", __func__);
+
 #ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
-	if (prevent_sleep) {
 	dt2w_scr_suspended = true;
-	}
 #endif
+
 	return 0;
 }
 
