@@ -89,3 +89,4 @@ obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_TEST_REPORTING) += synaptics_dsx_test_rep
 obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_FW_UPDATE_MMI) += synaptics_dsx_fw_update.o
 obj-$(CONFIG_TOUCHSCREEN_TOUCHX)	+= touchx.o
 obj-$(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE) += doubletap2wake.o
+obj-$(CONFIG_SWEEP2SLEEP)		+= sweep2sleep.o
