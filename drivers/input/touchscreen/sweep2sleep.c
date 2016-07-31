@@ -21,7 +21,7 @@ MODULE_LICENSE("GPL");
 
 //sweep2sleep
 #define S2S_PWRKEY_DUR          60
-#define S2S_Y_MAX             	1920
+#define S2S_Y_MAX             	1280
 #define S2S_Y_LIMIT             S2S_Y_MAX-180
 #define SWEEP_RIGHT		0x01
 #define SWEEP_LEFT		0x02
